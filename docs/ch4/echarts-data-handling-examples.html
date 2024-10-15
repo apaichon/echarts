@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts Data Handling Examples</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+    <style>
+        .chart-container { width: 100%; height: 400px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div id="staticDataChart" class="chart-container"></div>
+    <div id="dynamicDataChart" class="chart-container"></div>
+    <button id="updateDataBtn">Update Dynamic Data</button>
+</br>
+</br>
+    <div id="datasetChart" class="chart-container"></div>
+    <div id="dataTransformChart" class="chart-container"></div>
+
+    <script>
+        // 1. Static Data Example
+        (function() {
+            var chart = echarts.init(document.getElementById('staticDataChart'));
+            var option = {
+                title: { text: 'Static Data: Monthly Sales' },
+                xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
+                yAxis: { type: 'value' },
+                series: [{
+                    data: [150, 230, 224, 218, 135, 147],
+                    type: 'line'
+                }]
+            };
+            chart.setOption(option);
+        })();
+
+        // 2. Dynamic Data Example
+        (function() {
+            var chart = echarts.init(document.getElementById('dynamicDataChart'));
+            var data = [150, 230, 224, 218, 135, 147];
+            var option = {
+                title: { text: 'Dynamic Data: Monthly Sales' },
+                xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
+                yAxis: { type: 'value' },
+                series: [{
+                    data: data,
+                    type: 'bar'
+                }]
+            };
+            chart.setOption(option);
+
+            // Function to update data
+            function updateData() {
+                data = data.map(() => Math.round(Math.random() * 300));
+                chart.setOption({
+                    series: [{
+                        data: data
+                    }]
+                });
+            }
+
+            // Attach update function to button
+            document.getElementById('updateDataBtn').addEventListener('click', updateData);
+        })();
+
+        // 3. Dataset Component Example
+        (function() {
+            var chart = echarts.init(document.getElementById('datasetChart'));
+            var option = {
+                title: { text: 'Dataset Component: Product Sales' },
+                legend: {},
+                tooltip: {},
+                dataset: {
+                    dimensions: ['product', '2015', '2016', '2017'],
+                    source: [
+                        {product: 'Matcha Latte', '2015': 43.3, '2016': 85.8, '2017': 93.7},
+                        {product: 'Milk Tea', '2015': 83.1, '2016': 73.4, '2017': 55.1},
+                        {product: 'Cheese Cocoa', '2015': 86.4, '2016': 65.2, '2017': 82.5},
+                        {product: 'Walnut Brownie', '2015': 72.4, '2016': 53.9, '2017': 39.1}
+                    ]
+                },
+                xAxis: {type: 'category'},
+                yAxis: {},
+                series: [
+                    {type: 'bar'},
+                    {type: 'bar'},
+                    {type: 'bar'}
+                ]
+            };
+            chart.setOption(option);
+        })();
+
+        // 4. Data Transformation Example
+        (function() {
+            var chart = echarts.init(document.getElementById('dataTransformChart'));
+            var option = {
+                title: { 
+                    text: 'Data Transformation: Product Sales Analysis',
+                    left: 'center'
+                },
+                tooltip: {},
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                dataset: [
+                    {
+                        id: 'raw',
+                        source: [
+                            ['product', 'sales', 'price'],
+                            ['Product A', 32, 18],
+                            ['Product B', 64, 23],
+                            ['Product C', 96, 35],
+                            ['Product D', 56, 42],
+                            ['Product E', 72, 28]
+                        ]
+                    },
+                    {
+                        id: 'revenue',
+                        fromDatasetId: 'raw',
+                        transform: [
+                            {
+                                type: 'filter',
+                                config: { dimension: 'sales', gte: 60 }
+                            },
+                            {
+                                type: 'sort',
+                                config: { dimension: 'price', order: 'desc' }
+                            }
+                        ]
+                    }
+                ],
+                xAxis: { type: 'category' },
+                yAxis: {},
+                series: [
+                    {
+                        type: 'bar',
+                        name: 'Sales',
+                        datasetId: 'revenue',
+                        encode: {
+                            x: 'product',
+                            y: 'sales'
+                        }
+                    },
+                    {
+                        type: 'bar',
+                        name: 'Price',
+                        datasetId: 'revenue',
+                        encode: {
+                            x: 'product',
+                            y: 'price'
+                        }
+                    }
+                ]
+            };
+            chart.setOption(option);
+        })();
+    </script>
+</body>
+</html>

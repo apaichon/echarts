@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>US Population Choropleth Map</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/extension/dataTool.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/extension/bmap.min.js"></script>
+</head>
+<body>
+    <div id="main" style="width: 800px; height: 600px;"></div>
+    <script>
+        var chart = echarts.init(document.getElementById('main'));
+
+        // Simplified US map data
+        var usaJson = {
+            "type": "FeatureCollection",
+            "features": [
+                {"type":"Feature","properties":{"name":"Alabama"},"geometry":{"type":"Polygon","coordinates":[[[-88.2,35],[-88.2,30.2],[-84.9,30.2],[-84.9,35],[-88.2,35]]]}},
+                {"type":"Feature","properties":{"name":"Alaska"},"geometry":{"type":"Polygon","coordinates":[[[-180,50],[-180,70],[-140,70],[-140,50],[-180,50]]]}},
+                {"type":"Feature","properties":{"name":"Arizona"},"geometry":{"type":"Polygon","coordinates":[[[-114.6,37],[-114.6,31.3],[-109,31.3],[-109,37],[-114.6,37]]]}},
+                {"type":"Feature","properties":{"name":"Arkansas"},"geometry":{"type":"Polygon","coordinates":[[[-94.6,36.5],[-94.6,33],[-89.7,33],[-89.7,36.5],[-94.6,36.5]]]}},
+                {"type":"Feature","properties":{"name":"California"},"geometry":{"type":"Polygon","coordinates":[[[-124.4,42],[-124.4,32.5],[-114.1,32.5],[-114.1,42],[-124.4,42]]]}}
+            ]
+        };
+
+        echarts.registerMap('USA', usaJson);
+
+        var data = [
+            {name: 'Alabama', value: 4903185},
+            {name: 'Alaska', value: 731545},
+            {name: 'Arizona', value: 7278717},
+            {name: 'Arkansas', value: 3017804},
+            {name: 'California', value: 39512223}
+        ];
+
+        var option = {
+            title: {
+                text: 'US Population by State',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}: {c}'
+            },
+            visualMap: {
+                min: 500000,
+                max: 40000000,
+                text: ['High', 'Low'],
+                realtime: false,
+                calculable: true,
+                inRange: {
+                    color: ['lightskyblue', 'yellow', 'orangered']
+                }
+            },
+            series: [
+                {
+                    name: 'USA Population',
+                    type: 'map',
+                    mapType: 'USA',
+                    roam: true,
+                    data: data,
+                    label: {
+                        show: true
+                    },
+                    emphasis: {
+                        label: {
+                            show: true
+                        }
+                    }
+                }
+            ]
+        };
+
+        chart.setOption(option);
+    </script>
+</body>
+</html>

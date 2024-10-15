@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ECharts Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="chart-container" style="width: 600px; height: 400px;"></div>
+    <script>
+        // ECharts initialization code will go here
+        // Initialize ECharts instance
+        var myChart = echarts.init(document.getElementById('chart-container'));
+
+        // Specify chart configuration and data
+        var option = {
+            xAxis: {
+                type: 'category',
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    data: [150, 230, 224, 218, 135, 147, 260],
+                    type: 'line'
+                }
+            ]
+        };
+
+        // Display the chart using the configuration items and data
+        myChart.setOption(option);
+    </script>
+</body>
+
+</html>

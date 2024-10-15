@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Real-time Payments Race Chart for Thai Cities</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; }
+        #main { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+    <script>
+        var chart = echarts.init(document.getElementById('main'));
+
+        var data = [
+            { name: 'Bangkok', value: 0 },
+            { name: 'Chiang Mai', value: 0 },
+            { name: 'Phuket', value: 0 },
+            { name: 'Pattaya', value: 0 },
+            { name: 'Krabi', value: 0 },
+            { name: 'Ayutthaya', value: 0 },
+            { name: 'Hua Hin', value: 0 },
+            { name: 'Koh Samui', value: 0 }
+        ];
+
+        var option = {
+            title: {
+                text: 'Real-time Payments in Thai Cities',
+                subtext: 'Simulated data for demonstration',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function(params) {
+                    return params[0].name + ': ' + params[0].value.toLocaleString() + ' THB';
+                }
+            },
+            xAxis: {
+                max: 'dataMax'
+            },
+            yAxis: {
+                type: 'category',
+                data: data.map(function (item) {
+                    return item.name;
+                }),
+                inverse: true,
+                animationDuration: 300,
+                animationDurationUpdate: 300
+            },
+            series: [{
+                realtimeSort: true,
+                seriesLayoutBy: 'column',
+                type: 'bar',
+                encode: {
+                    x: 'value',
+                    y: 'name'
+                },
+                label: {
+                    show: true,
+                    precision: 1,
+                    position: 'right',
+                    valueAnimation: true,
+                    fontFamily: 'monospace',
+                    formatter: function(params) {
+                        return params.value.toLocaleString() + ' THB';
+                    }
+                }
+            }],
+            animationDuration: 0,
+            animationDurationUpdate: 3000,
+            animationEasing: 'linear',
+            animationEasingUpdate: 'linear'
+        };
+
+        function run() {
+            var baseValues = [10000, 8000, 7000, 6000, 5000, 4000, 3000, 2000];
+            
+            data.forEach(function(item, index) {
+                item.value += Math.round(Math.random() * 2000) + baseValues[index];
+            });
+
+            data.sort(function(a, b) { return b.value - a.value; });
+
+            option.yAxis.data = data.map(function (item) {
+                return item.name;
+            });
+
+            option.series[0].data = data.map(function (item) {
+                return item.value;
+            });
+
+            chart.setOption(option);
+        }
+
+        setInterval(function() {
+            run();
+        }, 3000);
+
+        run();
+
+        window.addEventListener('resize', function() {
+            chart.resize();
+        });
+    </script>
+</body>
+</html>

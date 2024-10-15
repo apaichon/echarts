@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts Interactivity Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+    <style>
+        .chart-container { width: 100%; height: 400px; margin-bottom: 20px; }
+        #event-output { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <div id="main-chart" class="chart-container"></div>
+    <div id="event-output">Event output will appear here</div>
+    <div id="linked-chart" class="chart-container"></div>
+
+    <script>
+        // Main chart initialization
+        var mainChart = echarts.init(document.getElementById('main-chart'));
+        var linkedChart = echarts.init(document.getElementById('linked-chart'));
+
+        // Generate some sample data
+        function generateData() {
+            let data = [];
+            for (let i = 0; i < 100; i++) {
+                data.push([
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100
+                ]);
+            }
+            return data;
+        }
+
+        var data = generateData();
+
+        // Main chart option
+        var mainOption = {
+            title: {
+                text: 'Interactive Scatter Chart',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    return `(${params.value[0].toFixed(2)}, ${params.value[1].toFixed(2)}, ${params.value[2].toFixed(2)})`;
+                }
+            },
+            xAxis: {},
+            yAxis: {},
+            dataZoom: [
+                {
+                    type: 'slider',
+                    xAxisIndex: 0,
+                    start: 0,
+                    end: 100
+                },
+                {
+                    type: 'slider',
+                    yAxisIndex: 0,
+                    start: 0,
+                    end: 100
+                },
+                {
+                    type: 'inside',
+                    xAxisIndex: 0,
+                    start: 0,
+                    end: 100
+                },
+                {
+                    type: 'inside',
+                    yAxisIndex: 0,
+                    start: 0,
+                    end: 100
+                }
+            ],
+            toolbox: {
+                feature: {
+                    dataZoom: {},
+                    brush: {
+                        type: ['rect', 'polygon', 'keep', 'clear']
+                    },
+                    restore: {}
+                }
+            },
+            brush: {},
+            series: [
+                {
+                    symbolSize: 10,
+                    data: data,
+                    type: 'scatter'
+                }
+            ]
+        };
+
+        // Linked chart option
+        var linkedOption = {
+            title: {
+                text: 'Linked Chart (Z-value distribution)',
+                left: 'center'
+            },
+            xAxis: {},
+            yAxis: {},
+            series: [
+                {
+                    data: data.map(item => item[2]),
+                    type: 'bar'
+                }
+            ]
+        };
+
+        // Set options to charts
+        mainChart.setOption(mainOption);
+        linkedChart.setOption(linkedOption);
+
+        // Event handling
+        mainChart.on('click', function(params) {
+            document.getElementById('event-output').innerHTML = 
+                `Clicked point: (${params.value[0].toFixed(2)}, ${params.value[1].toFixed(2)}, ${params.value[2].toFixed(2)})`;
+        });
+
+        // Brushing and linking
+        mainChart.on('brushSelected', function (params) {
+            var brushComponent = params.batch[0];
+            var selectedItems = [];
+            
+            for (var sIdx = 0; sIdx < brushComponent.selected.length; sIdx++) {
+                var rawIndices = brushComponent.selected[sIdx].dataIndex;
+                for (var i = 0; i < rawIndices.length; i++) {
+                    selectedItems.push(data[rawIndices[i]][2]);
+                }
+            }
+
+            linkedChart.setOption({
+                series: [{
+                    data: selectedItems
+                }]
+            });
+        });
+
+        // Handle brush clear
+        mainChart.on('brushEnd', function (params) {
+            if (params.areas.length === 0) {
+                linkedChart.setOption({
+                    series: [{
+                        data: data.map(item => item[2])
+                    }]
+                });
+            }
+        });
+    </script>
+</body>
+</html>

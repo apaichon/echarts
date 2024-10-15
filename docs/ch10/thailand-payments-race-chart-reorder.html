@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Real-time Payments Race Bar Chart for Thai Cities</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; }
+        #main { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+    <script>
+        var chart = echarts.init(document.getElementById('main'));
+
+        var data = [
+            { name: 'Bangkok', value: 0 },
+            { name: 'Chiang Mai', value: 0 },
+            { name: 'Phuket', value: 0 },
+            { name: 'Pattaya', value: 0 },
+            { name: 'Krabi', value: 0 },
+            { name: 'Ayutthaya', value: 0 },
+            { name: 'Hua Hin', value: 0 },
+            { name: 'Koh Samui', value: 0 }
+        ];
+
+        var startTime = new Date();
+
+        function updateData() {
+            data.forEach(function(item) {
+                // Random increment between 0 and 1000
+                item.value += Math.floor(Math.random() * 1001);
+            });
+
+            // Sort data from highest to lowest
+            data.sort((a, b) => b.value - a.value);
+        }
+
+        function updateChart() {
+            var currentTime = new Date();
+            var elapsedTime = (currentTime - startTime) / 1000; // in seconds
+
+            option.xAxis.max = Math.max(...data.map(item => item.value));
+            option.yAxis.data = data.map(item => item.name);
+            option.series[0].data = data.map(item => item.value);
+            
+            // Update the elapsed time text
+            option.title.subtext = `Elapsed Time: ${elapsedTime.toFixed(1)}s`;
+
+            chart.setOption(option);
+        }
+
+        var option = {
+            title: {
+                text: 'Real-time Payments Race in Thai Cities',
+                subtext: 'Elapsed Time: 0s',
+                left: 'center',
+                subtextStyle: {
+                    fontSize: 14,
+                    color: '#666'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function(params) {
+                    return `${params[0].name}: ${params[0].value.toLocaleString()} THB`;
+                }
+            },
+            xAxis: {
+                max: 'dataMax'
+            },
+            yAxis: {
+                type: 'category',
+                data: data.map(item => item.name),
+                inverse: true,
+                animationDuration: 300,
+                animationDurationUpdate: 300
+            },
+            series: [{
+                realtimeSort: true,
+                type: 'bar',
+                data: data.map(item => item.value),
+                label: {
+                    show: true,
+                    position: 'right',
+                    valueAnimation: true,
+                    formatter: '{value} THB'
+                },
+                itemStyle: {
+                    color: function(param) {
+                        return ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4'][param.dataIndex];
+                    }
+                }
+            }],
+            animationDuration: 0,
+            animationDurationUpdate: 1000,
+            animationEasing: 'linear',
+            animationEasingUpdate: 'linear'
+        };
+
+        updateData();
+        updateChart();
+
+        setInterval(function() {
+            updateData();
+            updateChart();
+        }, 1000);
+
+        window.addEventListener('resize', function() {
+            chart.resize();
+        });
+    </script>
+</body>
+</html>

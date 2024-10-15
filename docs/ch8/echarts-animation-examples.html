@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts Animation Examples</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+    <style>
+        .chart-container {
+            width: 600px;
+            height: 400px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart1" class="chart-container"></div>
+    <div id="chart2" class="chart-container"></div>
+    <div id="chart3" class="chart-container"></div>
+    <button id="changeType">Change Chart Type</button>
+
+    <script>
+        // Initialize ECharts instances
+        var chart1 = echarts.init(document.getElementById('chart1'));
+        var chart2 = echarts.init(document.getElementById('chart2'));
+        var chart3 = echarts.init(document.getElementById('chart3'));
+
+        // 1. Enabling/Disabling Animations
+        var option1 = {
+            title: { text: 'Enabling/Disabling Animations' },
+            xAxis: { data: ['A', 'B', 'C', 'D', 'E', 'F', 'G'] },
+            yAxis: {},
+            series: [{
+                type: 'bar',
+                data: [120, 200, 150, 80, 70, 110, 130],
+            }],
+            animation: true,
+            animationDuration: 1000,
+            animationEasing: 'cubicOut',
+            animationThreshold: 2000
+        };
+        chart1.setOption(option1);
+
+        // 2. Customizing Animation Effects
+        var option2 = {
+            title: { text: 'Customizing Animation Effects' },
+            xAxis: { data: ['A', 'B', 'C', 'D', 'E', 'F', 'G'] },
+            yAxis: {},
+            series: [{
+                type: 'bar',
+                data: [120, 200, 150, 80, 70, 110, 130],
+                animationDelay: function (idx) {
+                    return idx * 100;
+                },
+                animationDurationUpdate: function (idx) {
+                    return idx * 100 + 300;
+                }
+            }]
+        };
+        chart2.setOption(option2);
+
+        // 3. Transitions Between Chart Types
+        var option3 = {
+            title: { text: 'Transitions Between Chart Types' },
+            xAxis: { data: ['A', 'B', 'C', 'D', 'E', 'F', 'G'] },
+            yAxis: {},
+            series: [{
+                type: 'bar',
+                data: [120, 200, 150, 80, 70, 110, 130],
+                animationDuration: 1500,
+                animationEasing: 'elasticOut'
+            }]
+        };
+        chart3.setOption(option3);
+
+        // Change chart type on button click
+        document.getElementById('changeType').addEventListener('click', function() {
+            option3.series[0].type = option3.series[0].type === 'bar' ? 'line' : 'bar';
+            chart3.setOption(option3);
+        });
+    </script>
+</body>
+</html>

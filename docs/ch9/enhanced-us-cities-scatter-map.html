@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Enhanced US Cities Scatter Plot on Map</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; }
+        #main { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+    <script>
+        var chart = echarts.init(document.getElementById('main'));
+
+        var data = [
+            {name: 'New York', value: [40.7128, -74.0060, 8336817, 2.1]},
+            {name: 'Los Angeles', value: [34.0522, -118.2437, 3898747, 1.8]},
+            {name: 'Chicago', value: [41.8781, -87.6298, 2746388, -0.5]},
+            {name: 'Houston', value: [29.7604, -95.3698, 2304580, 3.2]},
+            {name: 'Phoenix', value: [33.4484, -112.0740, 1608139, 4.5]},
+            {name: 'Philadelphia', value: [39.9526, -75.1652, 1603797, 0.8]},
+            {name: 'San Antonio', value: [29.4241, -98.4936, 1434625, 3.9]},
+            {name: 'San Diego', value: [32.7157, -117.1611, 1386932, 2.3]},
+            {name: 'Dallas', value: [32.7767, -96.7970, 1304379, 3.6]},
+            {name: 'San Jose', value: [37.3382, -121.8863, 1013240, 1.5]},
+            {name: 'Austin', value: [30.2672, -97.7431, 961855, 5.4]},
+            {name: 'Jacksonville', value: [30.3322, -81.6557, 911507, 3.1]},
+            {name: 'Fort Worth', value: [32.7555, -97.3308, 909585, 4.8]},
+            {name: 'Columbus', value: [39.9612, -82.9988, 898553, 2.7]},
+            {name: 'San Francisco', value: [37.7749, -122.4194, 881549, 1.2]}
+        ];
+
+        function updateChart() {
+            var option = {
+                backgroundColor: '#404a59',
+                title: {
+                    text: 'Major US Cities',
+                    subtext: 'Population and Growth Rate',
+                    left: 'center',
+                    textStyle: { color: '#fff' },
+                    subtextStyle: { color: '#ccc' }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        return params.name + '<br/>Population: ' + params.value[2].toLocaleString() +
+                               '<br/>Growth Rate: ' + params.value[3] + '%';
+                    }
+                },
+                visualMap: [
+                    {
+                        left: 'right',
+                        top: 'top',
+                        dimension: 3,
+                        min: -1,
+                        max: 6,
+                        itemWidth: 30,
+                        itemHeight: 120,
+                        calculable: true,
+                        precision: 0.1,
+                        text: ['Growth Rate (%)'],
+                        textGap: 30,
+                        inRange: {
+                            color: ['#50a3ba', '#eac736', '#d94e5d']
+                        },
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    }
+                ],
+                geo: {
+                    map: 'USA',
+                    label: { emphasis: { show: false } },
+                    itemStyle: {
+                        normal: { areaColor: '#323c48', borderColor: '#111' },
+                        emphasis: { areaColor: '#2a333d' }
+                    },
+                    roam: true
+                },
+                series: [{
+                    name: 'Cities',
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    data: data,
+                    symbolSize: function (val) {
+                        return Math.sqrt(val[2]) / 50;
+                    },
+                    label: {
+                        formatter: '{b}',
+                        position: 'right',
+                        show: false
+                    },
+                    emphasis: {
+                        label: { show: true }
+                    }
+                }]
+            };
+
+            chart.setOption(option);
+        }
+
+        updateChart();
+
+        window.addEventListener('resize', function() {
+            chart.resize();
+        });
+    </script>
+</body>
+</html>
